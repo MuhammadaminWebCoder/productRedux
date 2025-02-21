@@ -1,20 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const intialState = {
-    likeList:[],
-}
+const getInitialLikeList = () => {
+    const storedLikes = localStorage.getItem("likeList");
+    return storedLikes ? JSON.parse(storedLikes) : [];
+};
+
+const initialState = {
+    likeList: getInitialLikeList(),
+};
 
 export const LikeSlice = createSlice({
-    name:"likes",
-    intialState,
-    reducers:{
-        saveLikeList:(state,action) => {
-            likeList:[...state.likeList,action.payload]
+    name: "likes",
+    initialState,
+    reducers: {
+        saveLikeList: (state, action) => {
+            state.likeList.push(action.payload);
+            localStorage.setItem("likeList", JSON.stringify(state.likeList));
         },
-        removeLikeList:(state,action) => {
-            
+        removeLikeList: (state, action) => {
+            state.likeList = state.likeList.filter(item => item.id !== action.payload.id);
+            localStorage.setItem("likeList", JSON.stringify(state.likeList));
         }
     }
-})
+});
 
-export const {saveLikeList,removeLikeList} = LikeSlice.actions
+export const { saveLikeList, removeLikeList } = LikeSlice.actions;
+export default LikeSlice.reducer;
